@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar Sesión - Meccainnova</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .auth-card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        h2 { text-align: center; color: #333; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 14px; color: #555; }
+        input { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; }
+        button { width: 100%; background: #ff6600; color: white; border: none; padding: 12px; font-weight: bold; cursor: pointer; border-radius: 4px; margin-top: 10px; }
+        button:hover { background: #e55c00; }
+        .link { text-align: center; margin-top: 15px; font-size: 14px; }
+        .link a { color: #ff6600; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<div class="auth-card">
+    <h2>Iniciar Sesión</h2>
+    <form id="form-login" onsubmit="iniciarSesion(event)">
+        <div class="form-group">
+            <label>Correo electrónico</label>
+            <input type="email" id="login-email" required>
+        </div>
+        <div class="form-group">
+            <label>Contraseña</label>
+            <input type="password" id="login-password" required>
+        </div>
+        <button type="submit">Entrar</button>
+    </form>
+    <div class="link">
+        ¿No tienes una cuenta? <a href="register.html">Regístrate aquí</a>
+    </div>
+</div>
+
+<script>
+function iniciarSesion(e) {
+    e.preventDefault();
+    let email = document.getElementById('login-email').value;
+    let password = document.getElementById('login-password').value;
+
+    let usuarios = JSON.parse(localStorage.getItem('usuariosMeccainnova')) || [];
+
+    let usuarioEncontrado = usuarios.find(u => u.email === email && u.password === password);
+
+    if (usuarioEncontrado) {
+        localStorage.setItem('usuarioActivo', JSON.stringify(usuarioEncontrado));
+        alert('¡Bienvenido de nuevo, ' + usuarioEncontrado.nombre + '!');
+        window.location.href = 'index.html';
+    } else {
+        alert('Correo o contraseña incorrectos.');
+    }
+}
+window.addEventListener('DOMContentLoaded', () => {
+    let usuarioActivo = JSON.parse(localStorage.getItem('usuarioActivo'));
+    if (usuarioActivo) {
+        let contenedorUser = document.querySelector('.user-account');
+        if (contenedorUser) {
+            contenedorUser.innerHTML = `Hola, <strong>${usuarioActivo.nombre}</strong> | <a href="#" onclick="cerrarSesion()" style="color: #cc0000; text-decoration: none;">Salir</a>`;
+        }
+    }
+});
+
+function cerrarSesion() {
+    localStorage.removeItem('usuarioActivo');
+    window.location.reload();
+}
+</script>
+
+</body>
+</html>
